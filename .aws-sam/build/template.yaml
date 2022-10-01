@@ -12,11 +12,11 @@ Globals:
   Api:
     TracingEnabled: true
 Resources:
-  HelloWorldFunction:
+  LineBotSadnboxFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: HelloWorldFunction
-      Handler: hello-world
+      CodeUri: LineBotSadnboxFunction
+      Handler: line-bot-sandbox
       Runtime: go1.x
       Architectures:
       - x86_64
@@ -30,21 +30,21 @@ Resources:
         Variables:
           PARAM1: VALUE
     Metadata:
-      SamResourceId: HelloWorldFunction
+      SamResourceId: LineBotSadnboxFunction
 Outputs:
-  HelloWorldAPI:
+  LineBotSadnboxAPI:
     Description: API Gateway endpoint URL for Prod environment for First Function
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
-  HelloWorldFunction:
+  LineBotSadnboxFunction:
     Description: First Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - HelloWorldFunction
+      - LineBotSadnboxFunction
       - Arn
-  HelloWorldFunctionIamRole:
+  LineBotSadnboxFunctionIamRole:
     Description: Implicit IAM Role created for Hello World function
     Value:
       Fn::GetAtt:
-      - HelloWorldFunctionRole
+      - LineBotSadnboxFunctionRole
       - Arn

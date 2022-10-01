@@ -2,12 +2,12 @@
 
 [function_build_definitions]
 [function_build_definitions.ec0d76ec-3fef-45d9-990c-8d13fe38ee46]
-codeuri = "/Users/o6lvl4/workspace/github.com/O6lvl4/line-bot-sandbox/hello-world"
+codeuri = "/Users/o6lvl4/workspace/github.com/O6lvl4/line-bot-sandbox/line-bot-sandbox"
 runtime = "go1.x"
 architecture = "x86_64"
-handler = "hello-world"
+handler = "line-bot-sandbox"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["HelloWorldFunction"]
+functions = ["LineBotSadnboxFunction"]
 
 [layer_build_definitions]
