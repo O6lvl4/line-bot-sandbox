@@ -1,47 +1,49 @@
 package main
 
 import (
-	"errors"
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+	"line-bot-sandbox/linebotsdk"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/joho/godotenv"
 )
 
-var (
-	// DefaultHTTPGetAddress Default Address
-	DefaultHTTPGetAddress = "https://checkip.amazonaws.com"
+func printStructure(structure interface{}) {
+	fmt.Printf("(%%#v) %#v\n", structure)
+}
 
-	// ErrNoIP No IP found in response
-	ErrNoIP = errors.New("No IP in HTTP response")
-
-	// ErrNon200Response non 200 status code in response
-	ErrNon200Response = errors.New("Non 200 Response found")
-)
+func convertLineBotRequest(requestBody string) (*linebotsdk.RequestEvent, error) {
+	var event linebotsdk.RequestEvent
+	err := json.Unmarshal([]byte(requestBody), &event)
+	if err != nil {
+		return nil, err
+	}
+	return &event, nil
+}
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	resp, err := http.Get(DefaultHTTPGetAddress)
+	printStructure(request)
+	err := godotenv.Load(".env")
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
-
-	if resp.StatusCode != 200 {
-		return events.APIGatewayProxyResponse{}, ErrNon200Response
-	}
-
-	ip, err := ioutil.ReadAll(resp.Body)
+	channelSecret := os.Getenv("LINE_BOT_CHANNEL_SECRET")
+	channelAccessToken := os.Getenv("LINE_BOT_CHANNEL_ACCESS_TOKEN")
+	bot := linebotsdk.NewBot(&linebotsdk.BotConfig{
+		ChannelSecret:      channelSecret,
+		ChannelAccessToken: channelAccessToken,
+	})
+	err = bot.ReplyText(request.Body, func(event *linebotsdk.RequestEvent) string {
+		return event.Message.Text
+	})
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
-
-	if len(ip) == 0 {
-		return events.APIGatewayProxyResponse{}, ErrNoIP
-	}
-
 	return events.APIGatewayProxyResponse{
-		Body:       fmt.Sprintf("Hello, %v", string(ip)),
+		Body:       fmt.Sprintf("Succeeded reply message"),
 		StatusCode: 200,
 	}, nil
 }
